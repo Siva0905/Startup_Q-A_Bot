@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e0f7fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Startup Advisor Chatbot</h1>
+        <input type="text" id="question" class="question-input" placeholder="Enter your question">
+        <button class="submit-btn" onclick="askQuestion()">Submit</button>
+        <div id="response" class="response"></div>
+    </div>
+
+    <script>
+        async function askQuestion() {
+            const question = document.getElementById('question').value;
+            const responseDiv = document.getElementById('response');
+
+            if (!question) {
+                responseDiv.innerHTML = 'Please enter a question.';
+                return;
+            }
+
+            const response = await fetch('http://127.0.0.1:5000/answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: question })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                responseDiv.innerHTML = `
+                    <strong>Similar Question:</strong> ${data.similar_question}<br>
+                    <strong>Context:</strong> ${data.context}<br>
+                    <strong>Answer:</strong> ${data.answer}<br>
+                    <strong>Correct Answer:</strong> ${data.correct_answer}
+                `;
+            } else {
+                responseDiv.innerHTML = 'Error fetching the answer. Please try again.';
+            }
+        }
+    </script>
+</body>
+</html>
